@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vina Wear - Thời trang bán hàng mẫu</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <div class="logo">Vina<span>Wear</span></div>
+  <input class="search" id="q" type="search" placeholder="Tìm sản phẩm (gõ không dấu cũng được)" aria-label="Tìm sản phẩm">
+  <button id="bFav">♥ Yêu thích<span class="badge" id="nFav">0</span></button>
+  <button id="bCmp">So sánh<span class="badge" id="nCmp">0</span></button>
+  <button class="pri" id="bCart">Giỏ hàng<span class="badge" id="nCart">0</span></button>
+  <button id="bAdm">Quản trị</button>
+</header>
+
+<section class="hero">
+  <h1>Mặc đẹp, giao nhanh toàn quốc.</h1>
+  <p>Cửa hàng quần áo mẫu của Vina Software. Miễn phí vận chuyển cho đơn từ 500.000đ. Thử mã VINA10 giảm 10%.</p>
+</section>
+
+<main>
+  <div class="chips" id="cats"></div>
+  <div class="filters">
+    <select id="fSize" aria-label="Size"><option value="">Mọi size</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+    <select id="fColor" aria-label="Màu"><option value="">Mọi màu</option></select>
+    <select id="fPrice" aria-label="Khoảng giá"><option value="">Mọi mức giá</option><option value="0-200">Dưới 200.000đ</option><option value="200-400">200.000đ - 400.000đ</option><option value="400-9999">Trên 400.000đ</option></select>
+    <select id="fSort" aria-label="Sắp xếp"><option value="">Mới nhất</option><option value="a">Giá tăng dần</option><option value="d">Giá giảm dần</option><option value="n">Tên A-Z</option></select>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+<footer>Vina Wear là website mẫu phục vụ báo cáo thực tập. Dữ liệu lưu trên trình duyệt của bạn.</footer>
+
+<dialog id="dCart"><div class="dh"><h2>Giỏ hàng</h2><button data-close>Đóng</button></div><div class="db" id="cartBody"></div></dialog>
+<dialog id="dCmp"><div class="dh"><h2>So sánh sản phẩm</h2><button data-close>Đóng</button></div><div class="db scroll" id="cmpBody"></div></dialog>
+<dialog id="dAdm"><div class="dh"><h2>Quản trị</h2><button data-close>Đóng</button></div><div class="db" id="admBody"></div></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
