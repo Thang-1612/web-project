@@ -28,13 +28,16 @@ rồi mở http://localhost:8000
 - Đơn hàng lưu chi tiết từng dòng (tên, size, số lượng, đơn giá) + tạm tính/giảm giá/phí ship; mã đơn tăng dần, không trùng
 - Xuất danh sách đơn hàng ra CSV (mở được bằng Excel, nạp được vào Power BI)
 - Danh sách so sánh được lưu khi tải lại trang
+- Trang chi tiết sản phẩm (bấm tên sản phẩm): ảnh, mô tả, chọn size, thêm vào giỏ
+- Quản trị: sửa sản phẩm, gắn ảnh thật bằng đường dẫn (đặt ảnh trong thư mục img/) và mô tả
+- Địa chỉ giao hàng: đủ 34 tỉnh/thành, phường/xã - quận/huyện nhập tay
 
 ## Cần backend hoặc chưa có
 - Đăng nhập chỉ là so sánh chuỗi trong JavaScript, KHÔNG bảo mật. Cần backend thật.
 - Dữ liệu sản phẩm, đơn hàng, giỏ hàng nằm trong localStorage của từng trình duyệt,
   không chia sẻ giữa các máy. Cần cơ sở dữ liệu + API.
 - Chưa có thanh toán trực tuyến (chỉ ghi nhận "thanh toán khi nhận"), chưa gửi email/SMS.
-- Chưa có ảnh sản phẩm thật (hình áo vẽ bằng SVG theo màu), chưa có tải ảnh lên.
+- Ảnh sản phẩm dùng đường dẫn tới file trong thư mục img/ (nếu để trống sẽ hiện hình áo SVG); chưa có chức năng tải ảnh lên.
 - Chưa có tài khoản khách hàng, chưa theo dõi tồn kho.
-- Địa chỉ chỉ có 5 nhóm tỉnh/thành mẫu với vài quận/huyện, chưa đủ 34 tỉnh/thành, chưa có phường/xã.
+- Phường/xã, quận/huyện chưa có danh sách chọn theo tỉnh (đang nhập tay).
 - Chưa xuất dữ liệu ra Excel/CSV cho Power BI.
