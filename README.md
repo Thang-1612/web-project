@@ -24,7 +24,10 @@ rồi mở http://localhost:8000
 - Giỏ hàng: thêm, tăng/giảm, xóa; mã VINA10 (-10%) và FREESHIP
 - Phí vận chuyển: 20.000đ (TP.HCM, Hà Nội), 35.000đ (nơi khác), miễn phí từ 500.000đ
 - Biểu mẫu đặt hàng có kiểm tra hợp lệ; đơn lưu vào localStorage
-- Quản trị (admin / 123456): thêm/xóa sản phẩm, xem đơn, đổi trạng thái, tổng doanh thu
+- Quản trị (admin / 123456): thêm/xóa sản phẩm (có xác nhận, tự chọn size), xem đơn, đổi trạng thái, tổng doanh thu (không tính đơn đã hủy)
+- Đơn hàng lưu chi tiết từng dòng (tên, size, số lượng, đơn giá) + tạm tính/giảm giá/phí ship; mã đơn tăng dần, không trùng
+- Xuất danh sách đơn hàng ra CSV (mở được bằng Excel, nạp được vào Power BI)
+- Danh sách so sánh được lưu khi tải lại trang
 
 ## Cần backend hoặc chưa có
 - Đăng nhập chỉ là so sánh chuỗi trong JavaScript, KHÔNG bảo mật. Cần backend thật.
@@ -35,4 +38,3 @@ rồi mở http://localhost:8000
 - Chưa có tài khoản khách hàng, chưa theo dõi tồn kho.
 - Địa chỉ chỉ có 5 nhóm tỉnh/thành mẫu với vài quận/huyện, chưa đủ 34 tỉnh/thành, chưa có phường/xã.
 - Chưa xuất dữ liệu ra Excel/CSV cho Power BI.
-- Nút "So sánh" chỉ lưu tạm trong phiên, tải lại trang sẽ mất.

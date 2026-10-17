@@ -21,9 +21,10 @@ const SEED=[
  ["Chân váy chữ A","Váy",259000,0,"Đen",["S","M","L"]]
 ].map((a,i)=>({id:i+1,name:a[0],cat:a[1],price:a[2],sale:a[3],color:a[4],sizes:a[5]}));
 
-let products=load("vw_products",SEED), cart=load("vw_cart",[]), favs=load("vw_favs",[]), cmp=[], orders=load("vw_orders",[]);
+let products=load("vw_products",SEED), cart=load("vw_cart",[]), favs=load("vw_favs",[]), cmp=load("vw_cmp",[]), orders=load("vw_orders",[]);
 let cat="Tất cả", favOnly=false, admin=false;
 const cur=p=>p.sale||p.price;
+const nextCode=()=>{const n=load("vw_seq",0)+1;save("vw_seq",n);return"VW"+String(n).padStart(4,"0")};
 
 /* ---------- Danh sách sản phẩm ---------- */
 function shirt(c){return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M35 12 L12 24 L20 42 L30 38 L30 88 L70 88 L70 38 L80 42 L88 24 L65 12 Q50 24 35 12Z" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
@@ -52,7 +53,7 @@ function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");cl
 
 /* ---------- Giỏ hàng ---------- */
 const LOC={"TP. Hồ Chí Minh":["Quận 1","Quận 3","Thủ Đức","Bình Thạnh","Gò Vấp"],"Hà Nội":["Ba Đình","Cầu Giấy","Đống Đa","Hà Đông","Nam Từ Liêm"],"Đà Nẵng":["Hải Châu","Sơn Trà","Thanh Khê"],"Cần Thơ":["Ninh Kiều","Bình Thủy"],"Tỉnh khác":["Trung tâm tỉnh/thành"]};
-let coupon="",ship=35000,place={prov:"",dist:""};
+let coupon="",place={prov:"",dist:""};
 function totals(){
   const sub=cart.reduce((s,i)=>{const p=products.find(x=>x.id===i.id);return s+(p?cur(p)*i.qty:0)},0);
   let disc=coupon==="VINA10"?Math.round(sub*.1):0;
@@ -88,8 +89,9 @@ function placeOrder(){
   chk("#cAddr","#eAddr",s=>s.length>=5,"Nhập số nhà, tên đường");
   if(!ok)return;
   const t=totals();
-  orders.unshift({code:"VW"+String(Date.now()).slice(-6),time:new Date().toLocaleString("vi-VN"),name:v("#cName"),phone:v("#cPhone"),addr:`${v("#cAddr")}, ${v("#cDist")}, ${v("#cProv")}`,
-   items:cart.map(i=>{const p=products.find(x=>x.id===i.id);return`${p?p.name:"?"} (${i.size}) x${i.qty}`}).join("; "),total:t.total,status:"Mới"});
+  const lines=cart.map(i=>{const p=products.find(x=>x.id===i.id);return{id:i.id,name:p?p.name:"?",size:i.size,qty:i.qty,price:p?cur(p):0}});
+  orders.unshift({code:nextCode(),time:new Date().toLocaleString("vi-VN"),name:v("#cName"),phone:v("#cPhone"),addr:`${v("#cAddr")}, ${v("#cDist")}, ${v("#cProv")}`,
+   lines,items:lines.map(l=>`${l.name} (${l.size}) x${l.qty}`).join("; "),sub:t.sub,disc:t.disc,ship:t.ship,total:t.total,status:"Mới"});
   save("vw_orders",orders);cart=[];coupon="";save("vw_cart",cart);
   $("#cartBody").innerHTML=`<div class="empty"><h3>Đặt hàng thành công</h3>Mã đơn <b>${orders[0].code}</b>. Chúng tôi sẽ gọi xác nhận trong ít phút.</div>`;render();
 }
@@ -105,17 +107,18 @@ function renderCmp(){
 /* ---------- Quản trị ---------- */
 function renderAdm(){
   if(!admin){$("#admBody").innerHTML=`<p class="cat">Đăng nhập trình diễn: tài khoản <b>admin</b>, mật khẩu <b>123456</b>.</p><div class="f"><div><label for="aU">Tài khoản</label><input id="aU"></div><div><label for="aP">Mật khẩu</label><input id="aP" type="password"></div><div class="w"><div class="err" id="aE"></div><button class="pri" id="aGo">Đăng nhập</button></div></div>`;return}
-  const rev=orders.reduce((s,o)=>s+o.total,0);
+  const rev=orders.filter(o=>o.status!=="Đã hủy").reduce((s,o)=>s+o.total,0);
   $("#admBody").innerHTML=`<div class="tot big"><span>${orders.length} đơn hàng</span><span>Doanh thu ${fmt(rev)}</span></div>
   <h3>Thêm sản phẩm</h3><div class="f"><div class="w"><label for="nN">Tên</label><input id="nN"></div>
   <div><label for="nC">Danh mục</label><input id="nC" list="cl" value="Áo thun"><datalist id="cl">${[...new Set(products.map(p=>p.cat))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
   <div><label for="nM">Màu</label><select id="nM">${Object.keys(COLORS).map(c=>`<option>${c}</option>`).join("")}</select></div>
   <div><label for="nP">Giá (đồng)</label><input id="nP" type="number" min="1000"></div><div><label for="nS">Giá khuyến mãi (tùy chọn)</label><input id="nS" type="number" min="0"></div>
+  <div class="w"><label for="nZ">Size (cách nhau bằng dấu phẩy)</label><input id="nZ" value="S, M, L, XL"></div>
   <div class="w"><div class="err" id="nE"></div><button class="pri" id="nAdd">Thêm sản phẩm</button></div></div>
   <h3>Sản phẩm (${products.length})</h3><div class="scroll"><table>${products.map(p=>`<tr><td>${esc(p.name)}</td><td>${fmt(cur(p))}</td><td><button data-rm="${p.id}">Xóa</button></td></tr>`).join("")}</table></div>
   <h3>Đơn hàng</h3>${orders.length?`<div class="scroll"><table><tr><th>Mã</th><th>Khách</th><th>Đơn</th><th>Tổng</th><th>Trạng thái</th></tr>${orders.map((o,k)=>`<tr><td>${o.code}<br><span class="cat">${esc(o.time)}</span></td><td>${esc(o.name)}<br>${esc(o.phone)}<br><span class="cat">${esc(o.addr)}</span></td><td>${esc(o.items)}</td><td>${fmt(o.total)}</td>
   <td><select data-st="${k}">${["Mới","Đang giao","Hoàn tất","Đã hủy"].map(s=>`<option ${s===o.status?"selected":""}>${s}</option>`).join("")}</select></td></tr>`).join("")}</table></div>`:'<div class="empty">Chưa có đơn hàng nào.</div>'}
-  <p><button id="aOut">Đăng xuất</button></p>`;
+  <p><button id="aCsv">Xuất đơn hàng (CSV)</button> <button id="aOut">Đăng xuất</button></p>`;
 }
 
 /* ---------- Sự kiện ---------- */
@@ -125,18 +128,21 @@ document.addEventListener("click",e=>{
   else if(d.cat){cat=d.cat;favOnly=false;renderFilters();render()}
   else if(d.fav){const id=+d.fav;favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];save("vw_favs",favs);render()}
   else if(d.add){const id=+d.add,size=document.querySelector(`[data-size="${id}"]`).value,it=cart.find(i=>i.id===id&&i.size===size);it?it.qty++:cart.push({id,size,qty:1});save("vw_cart",cart);render();toast("Đã thêm vào giỏ hàng")}
-  else if(d.cmp){const id=+d.cmp;if(cmp.includes(id))cmp=cmp.filter(x=>x!==id);else if(cmp.length>=3)toast("Chỉ so sánh tối đa 3 sản phẩm");else cmp.push(id);render()}
+  else if(d.cmp){const id=+d.cmp;if(cmp.includes(id))cmp=cmp.filter(x=>x!==id);else if(cmp.length>=3)toast("Chỉ so sánh tối đa 3 sản phẩm");else cmp.push(id);save("vw_cmp",cmp);render()}
   else if(d.inc!==undefined){cart[+d.inc].qty++;save("vw_cart",cart);rerenderCart()}
   else if(d.dec!==undefined){const i=cart[+d.dec];i.qty>1?i.qty--:cart.splice(+d.dec,1);save("vw_cart",cart);rerenderCart()}
   else if(d.del!==undefined){cart.splice(+d.del,1);save("vw_cart",cart);rerenderCart()}
-  else if(d.rm){products=products.filter(p=>p.id!==+d.rm);cart=cart.filter(i=>i.id!==+d.rm);save("vw_products",products);save("vw_cart",cart);renderFilters();render();renderAdm()}
+  else if(d.rm){if(!confirm("Xóa sản phẩm này?"))return;products=products.filter(p=>p.id!==+d.rm);cart=cart.filter(i=>i.id!==+d.rm);cmp=cmp.filter(x=>x!==+d.rm);favs=favs.filter(x=>x!==+d.rm);save("vw_products",products);save("vw_cart",cart);save("vw_cmp",cmp);save("vw_favs",favs);renderFilters();render();renderAdm()}
   else if(t.id==="apCp"){const c=$("#cp").value.trim().toUpperCase();if(c&&!["VINA10","FREESHIP"].includes(c)){toast("Mã giảm giá không hợp lệ");return}coupon=c;rerenderCart();toast(c?"Đã áp dụng mã":"Đã bỏ mã")}
   else if(t.id==="order")placeOrder();
   else if(t.id==="aGo"){if($("#aU").value==="admin"&&$("#aP").value==="123456"){admin=true;renderAdm()}else $("#aE").textContent="Sai tài khoản hoặc mật khẩu."}
+  else if(t.id==="aCsv"){const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+    const rows=[["Mã","Thời gian","Khách","SĐT","Địa chỉ","Sản phẩm","Tạm tính","Giảm giá","Phí ship","Tổng","Trạng thái"],...orders.map(o=>[o.code,o.time,o.name,o.phone,o.addr,o.items,o.sub??"",o.disc??"",o.ship??"",o.total,o.status])];
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}));a.download="don-hang.csv";a.click();URL.revokeObjectURL(a.href)}
   else if(t.id==="aOut"){admin=false;renderAdm()}
-  else if(t.id==="nAdd"){const n=$("#nN").value.trim(),pr=+$("#nP").value,sa=+$("#nS").value||0;
-    if(n.length<2||pr<1000||(sa&&sa>=pr)){$("#nE").textContent="Nhập tên, giá từ 1.000đ trở lên; giá khuyến mãi phải thấp hơn giá gốc.";return}
-    products.push({id:Math.max(0,...products.map(p=>p.id))+1,name:n,cat:$("#nC").value.trim()||"Khác",price:pr,sale:sa,color:$("#nM").value,sizes:["S","M","L","XL"]});
+  else if(t.id==="nAdd"){const n=$("#nN").value.trim(),pr=+$("#nP").value,sa=+$("#nS").value||0,sz=[...new Set($("#nZ").value.split(",").map(x=>x.trim().toUpperCase()).filter(Boolean))];
+    if(n.length<2||!sz.length||pr<1000||(sa&&sa>=pr)){$("#nE").textContent="Nhập tên, giá từ 1.000đ trở lên; giá khuyến mãi phải thấp hơn giá gốc.";return}
+    products.push({id:Math.max(0,...products.map(p=>p.id))+1,name:n,cat:$("#nC").value.trim()||"Khác",price:pr,sale:sa,color:$("#nM").value,sizes:sz});
     save("vw_products",products);renderFilters();render();renderAdm();toast("Đã thêm sản phẩm")}
 });
 document.addEventListener("change",e=>{
