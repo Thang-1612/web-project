@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vina Wear - Thời trang bán hàng mẫu</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👕</text></svg>">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 <header>
@@ -14,6 +15,7 @@
   <button id="bFav">♥ Yêu thích<span class="badge" id="nFav">0</span></button>
   <button id="bCmp">So sánh<span class="badge" id="nCmp">0</span></button>
   <button class="pri" id="bCart">Giỏ hàng<span class="badge" id="nCart">0</span></button>
+  <button id="bTrk">Tra cứu đơn</button>
   <button id="bAdm">Quản trị</button>
 </header>
 
@@ -38,8 +40,12 @@
 <dialog id="dCmp"><div class="dh"><h2>So sánh sản phẩm</h2><button data-close>Đóng</button></div><div class="db scroll" id="cmpBody"></div></dialog>
 <dialog id="dAdm"><div class="dh"><h2>Quản trị</h2><button data-close>Đóng</button></div><div class="db" id="admBody"></div></dialog>
 <dialog id="dDet"><div class="dh"><h2>Chi tiết sản phẩm</h2><button data-close>Đóng</button></div><div class="db" id="detBody"></div></dialog>
+<dialog id="dTrack"><div class="dh"><h2>Tra cứu đơn hàng</h2><button data-close>Đóng</button></div><div class="db">
+  <div class="f"><div class="w"><label for="tCode">Mã đơn</label><input id="tCode" placeholder="Ví dụ: VW0001"></div>
+  <div class="w"><label for="tPhone">Số điện thoại đặt hàng</label><input id="tPhone" inputmode="tel"></div>
+  <div class="w"><button class="pri" id="tGo">Tra cứu</button></div></div><div id="tRes" aria-live="polite"></div></div></dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="js/app.js"></script>
+<script src="js/app.js?v=4"></script>
 </body>
 </html>

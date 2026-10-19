@@ -57,3 +57,4 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:24px}
 .lnk{border:0;background:none;padding:0;font-weight:700;font-size:15px;text-align:left}.lnk:hover{color:var(--acc)}
 .det{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:600px){.det{grid-template-columns:1fr}}
+.pic[data-det]{cursor:pointer}

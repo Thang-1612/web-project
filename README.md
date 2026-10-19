@@ -31,6 +31,7 @@ rồi mở http://localhost:8000
 - Trang chi tiết sản phẩm (bấm tên sản phẩm): ảnh, mô tả, chọn size, thêm vào giỏ
 - Quản trị: sửa sản phẩm, gắn ảnh thật bằng đường dẫn (đặt ảnh trong thư mục img/) và mô tả
 - Địa chỉ giao hàng: đủ 34 tỉnh/thành, phường/xã - quận/huyện nhập tay
+- Tra cứu đơn hàng bằng mã đơn + số điện thoại (nút "Tra cứu đơn")
 
 ## Cần backend hoặc chưa có
 - Đăng nhập chỉ là so sánh chuỗi trong JavaScript, KHÔNG bảo mật. Cần backend thật.

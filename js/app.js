@@ -7,18 +7,18 @@ const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 
 const COLORS={"Đen":"#222","Trắng":"#f2f2f2","Xanh navy":"#1f3a68","Be":"#d8c3a5","Đỏ đô":"#8e2a35","Xanh rêu":"#5b6b3a","Xám":"#8a8f94"};
 const SEED=[
- ["Áo thun cổ tròn basic","Áo thun",159000,0,"Trắng",["S","M","L","XL"]],
- ["Áo thun oversize in chữ","Áo thun",229000,199000,"Đen",["M","L","XL"]],
- ["Áo polo pique","Áo thun",289000,0,"Xanh navy",["S","M","L","XL"]],
- ["Áo sơ mi linen tay dài","Áo sơ mi",349000,0,"Be",["S","M","L"]],
- ["Áo sơ mi oxford kẻ","Áo sơ mi",379000,329000,"Xanh navy",["M","L","XL"]],
- ["Quần jeans ống suông","Quần",459000,0,"Xanh navy",["S","M","L","XL"]],
- ["Quần kaki slim fit","Quần",399000,0,"Be",["S","M","L","XL"]],
- ["Quần short thể thao","Quần",179000,0,"Xám",["S","M","L","XL"]],
- ["Áo khoác bomber","Áo khoác",589000,519000,"Xanh rêu",["M","L","XL"]],
- ["Áo hoodie nỉ bông","Áo khoác",419000,0,"Xám",["S","M","L","XL"]],
- ["Váy midi hoa nhí","Váy",369000,0,"Đỏ đô",["S","M","L"]],
- ["Chân váy chữ A","Váy",259000,0,"Đen",["S","M","L"]]
+ ["Áo thun cổ tròn basic","Áo thun",159000,0,"Trắng",["S","M","L","XL"],"","Áo thun cổ tròn form vừa, thiết kế basic dễ phối đồ hằng ngày."],
+ ["Áo thun oversize in chữ","Áo thun",229000,199000,"Đen",["M","L","XL"],"","Áo thun dáng oversize in chữ, phong cách trẻ trung, mặc rộng thoải mái."],
+ ["Áo polo pique","Áo thun",289000,0,"Xanh navy",["S","M","L","XL"],"","Áo polo lịch sự, phù hợp đi làm và đi chơi cuối tuần."],
+ ["Áo sơ mi linen tay dài","Áo sơ mi",349000,0,"Be",["S","M","L"],"","Áo sơ mi tay dài chất liệu linen, thoáng mát cho ngày nóng."],
+ ["Áo sơ mi oxford kẻ","Áo sơ mi",379000,329000,"Xanh navy",["M","L","XL"],"","Áo sơ mi oxford họa tiết kẻ, lịch sự và dễ kết hợp."],
+ ["Quần jeans ống suông","Quần",459000,0,"Xanh navy",["S","M","L","XL"],"","Quần jeans ống suông, dáng rộng thoải mái, dễ mặc."],
+ ["Quần kaki slim fit","Quần",399000,0,"Be",["S","M","L","XL"],"","Quần kaki dáng slim fit gọn gàng, phù hợp đi học, đi làm."],
+ ["Quần short thể thao","Quần",179000,0,"Xám",["S","M","L","XL"],"","Quần short thể thao nhẹ, thích hợp tập luyện và mặc ở nhà."],
+ ["Áo khoác bomber","Áo khoác",589000,519000,"Xanh rêu",["M","L","XL"],"","Áo khoác bomber phong cách đường phố, giữ ấm nhẹ."],
+ ["Áo hoodie nỉ bông","Áo khoác",419000,0,"Xám",["S","M","L","XL"],"","Áo hoodie nỉ bông ấm áp, có mũ, mặc thoải mái mùa lạnh."],
+ ["Váy midi hoa nhí","Váy",369000,0,"Đỏ đô",["S","M","L"],"","Váy midi họa tiết hoa nhí, nữ tính, hợp đi chơi và dạo phố."],
+ ["Chân váy chữ A","Váy",259000,0,"Đen",["S","M","L"],"","Chân váy chữ A đơn giản, dễ phối với áo sơ mi hoặc áo thun."]
 ].map((a,i)=>({id:i+1,name:a[0],cat:a[1],price:a[2],sale:a[3],color:a[4],sizes:a[5],img:a[6]||"",desc:a[7]||""}));
 
 let products=load("vw_products",SEED), cart=load("vw_cart",[]), favs=load("vw_favs",[]), cmp=load("vw_cmp",[]), orders=load("vw_orders",[]);
@@ -42,7 +42,7 @@ function render(){
   if(pr){const[a,b]=pr.split("-").map(Number);list=list.filter(p=>cur(p)>=a*1000&&cur(p)<b*1000)}
   if(so==="a")list.sort((x,y)=>cur(x)-cur(y));else if(so==="d")list.sort((x,y)=>cur(y)-cur(x));else if(so==="n")list.sort((x,y)=>x.name.localeCompare(y.name,"vi"));else list.sort((x,y)=>y.id-x.id);
   $("#grid").innerHTML=list.length?list.map(p=>`<article class="card">
-   <div class="pic" style="background:color-mix(in srgb,${COLORS[p.color]||"#999"} 14%,var(--card))">${pic(p)}
+   <div class="pic" style="background:color-mix(in srgb,${COLORS[p.color]||"#999"} 14%,var(--card))" data-det="${p.id}" title="Xem chi tiết">${pic(p)}
     <button class="fav ${favs.includes(p.id)?"on":""}" data-fav="${p.id}" aria-label="Yêu thích">${favs.includes(p.id)?"♥":"♡"}</button></div>
    <div class="info"><h3><button class="lnk" data-det="${p.id}">${esc(p.name)}</button></h3><div class="cat">${esc(p.cat)} · ${esc(p.color)}</div>
     <div class="price">${fmt(cur(p))}${p.sale?`<span class="old">${fmt(p.price)}</span>`:""}</div>
@@ -136,7 +136,7 @@ function fillForm(){const p=products.find(x=>x.id===editId);if(!p)return;const v
   $("#nAdd").textContent="Lưu thay đổi";$("#admBody h3").textContent="Sửa sản phẩm"}
 /* ---------- Sự kiện ---------- */
 document.addEventListener("click",e=>{
-  const t=e.target.closest("button");if(!t)return;const d=t.dataset;
+  const t=e.target.closest("button,[data-det]");if(!t)return;const d=t.dataset;
   if("close" in d)t.closest("dialog").close();
   else if(d.det)showDet(+d.det);
   else if(d.cat){cat=d.cat;favOnly=false;renderFilters();render()}
@@ -152,6 +152,7 @@ document.addEventListener("click",e=>{
   else if(t.id==="apCp"){const c=$("#cp").value.trim().toUpperCase();if(c&&!["VINA10","FREESHIP"].includes(c)){toast("Mã giảm giá không hợp lệ");return}coupon=c;rerenderCart();toast(c?"Đã áp dụng mã":"Đã bỏ mã")}
   else if(t.id==="order")placeOrder();
   else if(t.id==="aGo"){if($("#aU").value==="admin"&&$("#aP").value==="123456"){admin=true;renderAdm()}else $("#aE").textContent="Sai tài khoản hoặc mật khẩu."}
+  else if(t.id==="tGo")track();
   else if(t.id==="aCsv"){const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
     const rows=[["Mã","Thời gian","Khách","SĐT","Địa chỉ","Sản phẩm","Tạm tính","Giảm giá","Phí ship","Tổng","Trạng thái"],...orders.map(o=>[o.code,o.time,o.name,o.phone,o.addr,o.items,o.sub??"",o.disc??"",o.ship??"",o.total,o.status])];
     const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}));a.download="don-hang.csv";a.click();URL.revokeObjectURL(a.href)}
@@ -173,3 +174,8 @@ $("#bAdm").onclick=()=>{renderAdm();$("#dAdm").showModal()};
 $("#bFav").onclick=()=>{favOnly=!favOnly;renderFilters();render();toast(favOnly?"Đang xem sản phẩm yêu thích":"Đã hiện tất cả")};
 ["#q","#fSize","#fColor","#fPrice","#fSort"].forEach(s=>$(s).addEventListener("input",render));
 renderFilters();render();
+
+function track(){const c=$("#tCode").value.trim().toUpperCase(),ph=$("#tPhone").value.replace(/\s/g,"");
+  const o=orders.find(x=>x.code===c&&String(x.phone).replace(/\s/g,"")===ph);
+  $("#tRes").innerHTML=o?`<p><b>${esc(o.code)}</b> · ${esc(o.time)}</p><p>Trạng thái: <b>${esc(o.status)}</b></p><p>${esc(o.items)}</p><p>Tổng thanh toán: <b>${fmt(o.total)}</b></p>`:`<p class="err">Không tìm thấy đơn hàng. Hãy kiểm tra lại mã đơn và số điện thoại.</p>`}
+$("#bTrk").addEventListener("click",()=>{$("#tRes").innerHTML="";$("#dTrack").showModal()});
